@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS "trailer";
+DROP TABLE IF EXISTS "sensor";
+DROP TABLE IF EXISTS "trailer_sensor_map";
+DROP TABLE IF EXISTS "sensor_log";
+DROP TABLE IF EXISTS "gps_log";
+DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS "user_role";
+DROP TABLE IF EXISTS "user_auth";
+DROP TABLE IF EXISTS "user_cert";

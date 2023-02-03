@@ -10,16 +10,16 @@ dropdb:
 	docker exec -it postgres dropdb trailer_manager
 
 dbup:
-	migrate -path db/migration/postgresql -database "$(PG_URL)" -verbose up
+	migrate -path db/migration -database "$(PG_URL)" -verbose up
 
 dbup1:
-	migrate -path db/migration/postgresql -database "$(PG_URL)" -verbose up 1
+	migrate -path db/migration -database "$(PG_URL)" -verbose up 1
 
 dbdown:
-	migrate -path db/migration/postgresql -database "$(PG_URL)" -verbose down
+	migrate -path db/migration -database "$(PG_URL)" -verbose down
 
 dbdown1:
-	migrate -path db/migration/postgresql -database "$(PG_URL)" -verbose down 1
+	migrate -path db/migration -database "$(PG_URL)" -verbose down 1
 
 sqlc:
 	sqlc generate

@@ -11,4 +11,3 @@ type Broker struct {
 	Username string `toml:"username"`
 	Password string `toml:"password"`
 }
-

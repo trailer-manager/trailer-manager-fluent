@@ -14,8 +14,8 @@ const createSensor = `-- name: CreateSensor :one
 INSERT INTO sensor (
     sid
 ) VALUES (
-	 $1
- ) RETURNING sid, uid, lat, lon, wifi_loc, created_at, updated_at
+     $1
+ ) RETURNING sid, uid, lat, lon, wifi_loc, battery, created_at, updated_at
 `
 
 func (q *Queries) CreateSensor(ctx context.Context, sid string) (Sensor, error) {
@@ -27,6 +27,7 @@ func (q *Queries) CreateSensor(ctx context.Context, sid string) (Sensor, error) 
 		&i.Lat,
 		&i.Lon,
 		pq.Array(&i.WifiLoc),
+		&i.Battery,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -34,7 +35,7 @@ func (q *Queries) CreateSensor(ctx context.Context, sid string) (Sensor, error) 
 }
 
 const getSensor = `-- name: GetSensor :one
-SELECT sid, uid, lat, lon, wifi_loc, created_at, updated_at FROM sensor
+SELECT sid, uid, lat, lon, wifi_loc, battery, created_at, updated_at FROM sensor
 WHERE sid = $1 LIMIT 1
 `
 
@@ -47,6 +48,7 @@ func (q *Queries) GetSensor(ctx context.Context, sid string) (Sensor, error) {
 		&i.Lat,
 		&i.Lon,
 		pq.Array(&i.WifiLoc),
+		&i.Battery,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -58,9 +60,10 @@ UPDATE sensor
 SET lat = $2,
     lon = $3,
     wifi_loc = $4,
+    battery = $5,
     updated_at = now()
 WHERE sid = $1
-    RETURNING sid, uid, lat, lon, wifi_loc, created_at, updated_at
+    RETURNING sid, uid, lat, lon, wifi_loc, battery, created_at, updated_at
 `
 
 type UpdateSensorLocationParams struct {
@@ -68,6 +71,7 @@ type UpdateSensorLocationParams struct {
 	Lat     sql.NullString `json:"lat"`
 	Lon     sql.NullString `json:"lon"`
 	WifiLoc []string       `json:"wifi_loc"`
+	Battery sql.NullInt32  `json:"battery"`
 }
 
 func (q *Queries) UpdateSensorLocation(ctx context.Context, arg UpdateSensorLocationParams) (Sensor, error) {
@@ -76,6 +80,7 @@ func (q *Queries) UpdateSensorLocation(ctx context.Context, arg UpdateSensorLoca
 		arg.Lat,
 		arg.Lon,
 		pq.Array(arg.WifiLoc),
+		arg.Battery,
 	)
 	var i Sensor
 	err := row.Scan(
@@ -84,6 +89,7 @@ func (q *Queries) UpdateSensorLocation(ctx context.Context, arg UpdateSensorLoca
 		&i.Lat,
 		&i.Lon,
 		pq.Array(&i.WifiLoc),
+		&i.Battery,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

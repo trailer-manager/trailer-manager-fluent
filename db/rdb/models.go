@@ -18,8 +18,9 @@ type GpsLog struct {
 	// 속도
 	Speed sql.NullString `json:"speed"`
 	// WIFI 로케이션 (SSID)
-	WifiLoc       []string     `json:"wifi_loc"`
-	RealCreaetdAt sql.NullTime `json:"real_creaetd_at"`
+	WifiLoc       []string      `json:"wifi_loc"`
+	Battery       sql.NullInt32 `json:"battery"`
+	RealCreaetdAt sql.NullTime  `json:"real_creaetd_at"`
 }
 
 type Sensor struct {
@@ -32,9 +33,10 @@ type Sensor struct {
 	// 현재 위치 경도
 	Lon sql.NullString `json:"lon"`
 	// WIFI 로케이션 (SSID)
-	WifiLoc   []string     `json:"wifi_loc"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	WifiLoc   []string      `json:"wifi_loc"`
+	Battery   sql.NullInt32 `json:"battery"`
+	CreatedAt sql.NullTime  `json:"created_at"`
+	UpdatedAt sql.NullTime  `json:"updated_at"`
 }
 
 type SensorLog struct {

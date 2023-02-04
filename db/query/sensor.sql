@@ -15,6 +15,7 @@ UPDATE sensor
 SET lat = $2,
     lon = $3,
     wifi_loc = $4,
+    battery = $5,
     updated_at = now()
 WHERE sid = $1
     RETURNING *;

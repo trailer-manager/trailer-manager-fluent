@@ -11,6 +11,7 @@ CREATE TABLE "sensor" (
                           "lat" varchar,
                           "lon" varchar,
                           "wifi_loc" varchar[],
+                          "battery" int,
                           "created_at" timestamp DEFAULT (now()),
                           "updated_at" timestamp DEFAULT (now())
 );
@@ -37,6 +38,7 @@ CREATE TABLE "gps_log" (
                            "lon" varchar NOT NULL,
                            "speed" numeric,
                            "wifi_loc" varchar[],
+                           "battery" int,
                            "real_creaetd_at" timestamp DEFAULT (now())
 );
 

@@ -17,10 +17,11 @@ INSERT INTO gps_log (
     lon,
     speed,
     wifi_loc,
+    battery,
     real_created_at
 ) VALUES (
-	 $1, $2, $3, $4, $5, now()
- ) RETURNING sid, lat, lon, speed, wifi_loc, real_creaetd_at
+     $1, $2, $3, $4, $5, $6, now()
+ ) RETURNING sid, lat, lon, speed, wifi_loc, battery, real_creaetd_at
 `
 
 type CreateGpsLogParams struct {
@@ -29,6 +30,7 @@ type CreateGpsLogParams struct {
 	Lon     string         `json:"lon"`
 	Speed   sql.NullString `json:"speed"`
 	WifiLoc []string       `json:"wifi_loc"`
+	Battery sql.NullInt32  `json:"battery"`
 }
 
 func (q *Queries) CreateGpsLog(ctx context.Context, arg CreateGpsLogParams) (GpsLog, error) {
@@ -38,6 +40,7 @@ func (q *Queries) CreateGpsLog(ctx context.Context, arg CreateGpsLogParams) (Gps
 		arg.Lon,
 		arg.Speed,
 		pq.Array(arg.WifiLoc),
+		arg.Battery,
 	)
 	var i GpsLog
 	err := row.Scan(
@@ -46,6 +49,7 @@ func (q *Queries) CreateGpsLog(ctx context.Context, arg CreateGpsLogParams) (Gps
 		&i.Lon,
 		&i.Speed,
 		pq.Array(&i.WifiLoc),
+		&i.Battery,
 		&i.RealCreaetdAt,
 	)
 	return i, err

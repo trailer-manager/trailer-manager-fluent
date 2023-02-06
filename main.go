@@ -1,12 +1,14 @@
 package main
 
 import (
+	"SiverPineValley/trailer-manager/api"
 	"SiverPineValley/trailer-manager/broker"
 	"SiverPineValley/trailer-manager/config"
 	db "SiverPineValley/trailer-manager/db/rdb"
 	"SiverPineValley/trailer-manager/logger"
 	"SiverPineValley/trailer-manager/utility"
 	"flag"
+	"fmt"
 	"log"
 )
 
@@ -34,10 +36,11 @@ func main() {
 	}
 
 	// 5. Init Server
-	//server, err := api.NewServer(config, store)
-	//if err != nil {
-	//	log.Fatal("cannot create server: ", err)
-	//}
+	server, err := api.NewServer(db.NewStore(db.RDB))
+	if err != nil {
+		logger.Fatal("cannot create server: " + err.Error())
+	}
 
+	server.Router.Logger.Fatal(server.Router.Start(fmt.Sprintf(":%d", config.GetConfig().Port)))
 	return
 }

@@ -5,8 +5,11 @@ import (
 )
 
 type Config struct {
-	Broker Broker `toml:"broker"`
-	Rdb    Rdb    `toml:"rdb"`
+	Broker       Broker   `toml:"broker"`
+	Rdb          Rdb      `toml:"rdb"`
+	Port         int      `toml:"port"`
+	Processname  string   `toml:"processname"`
+	AllowOrigins []string `toml:"allow_origins"`
 }
 
 type Broker struct {
@@ -25,6 +28,14 @@ type Rdb struct {
 	DbName   string `toml:"dbname"`
 	Username string `toml:"username"`
 	Password string `toml:"password"`
+}
+
+type Server struct {
+	Host         string `toml:"host"`
+	Port         int    `toml:"port"`
+	PrefixUrl    string `toml:"prefixUrl"`
+	ClientId     string `toml:"clientId"`
+	ClientSecret string `toml:"clientSecret"`
 }
 
 var config Config

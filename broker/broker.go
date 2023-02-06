@@ -3,7 +3,6 @@ package broker
 import (
 	"SiverPineValley/trailer-manager/common"
 	"SiverPineValley/trailer-manager/config"
-	tmError "SiverPineValley/trailer-manager/error"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"log"
@@ -50,7 +49,7 @@ func InitBroker() (err error) {
 	}
 
 	if clientId == "" {
-		return tmError.ConfigErr
+		return common.ConfigErr
 	}
 
 	opts := mqtt.NewClientOptions()

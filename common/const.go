@@ -7,4 +7,8 @@ const (
 	ModeDevelopment = "dev"
 	ModeStaging     = "stg"
 	ModeProduction  = "prd"
+
+	ContextTypeNone = 0
+	ContextTypeGo   = 1
+	ContextTypeEcho = 2
 )

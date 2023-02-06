@@ -6,12 +6,23 @@ import (
 
 type Config struct {
 	Broker Broker `toml:"broker"`
+	Rdb    Rdb    `toml:"rdb"`
 }
 
 type Broker struct {
+	Host     string   `toml:"host"`
+	Port     int      `toml:"port"`
+	ClientId string   `toml:"clientId"`
+	Username string   `toml:"username"`
+	Password string   `toml:"password"`
+	Topics   []string `toml:"topics"`
+}
+
+type Rdb struct {
+	Driver   string `toml:"driver"`
 	Host     string `toml:"host"`
 	Port     int    `toml:"port"`
-	ClientId string `toml:"clientId"`
+	DbName   string `toml:"dbname"`
 	Username string `toml:"username"`
 	Password string `toml:"password"`
 }

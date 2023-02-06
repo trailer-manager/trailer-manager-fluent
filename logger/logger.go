@@ -3,11 +3,18 @@ package logger
 import (
 	"SiverPineValley/trailer-manager/common"
 	"encoding/json"
+	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	builtin_log "log"
 	"time"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+)
+
+const (
+	logFormat        = "%s %s --- %s"
+	logFormatContext = "%s %s %s [%s, %s] --- %s"
 )
 
 var log *zap.Logger
@@ -24,9 +31,9 @@ func initRotation(c zapcore.Core) zapcore.Core {
 	rotator, err := rotatelogs.New(
 		logFile,
 		rotatelogs.WithMaxAge(30*24*time.Hour),
-		rotatelogs.WithRotationTime(time.Hour * 24))
+		rotatelogs.WithRotationTime(time.Hour*24))
 	if err != nil {
-		panic(err)
+		builtin_log.Fatal(err)
 	}
 
 	w := zapcore.AddSync(rotator)
@@ -61,30 +68,64 @@ func InitLogger(mode string) (err error) {
 	// initialize the JSON encoding config
 	data, _ := json.Marshal(encoderConfig)
 	var encCfg zapcore.EncoderConfig
-	if err := json.Unmarshal(data, &encCfg); err != nil {
+	if err = json.Unmarshal(data, &encCfg); err != nil {
 		return
 	}
 
 	log, err = config.Build(zap.WrapCore(initRotation), zap.AddCallerSkip(1))
 	if err != nil {
-		panic(err)
+		builtin_log.Fatal(err)
 	}
 
 	return
 }
 
+func makeLogMessage(level string, message string) string {
+	now := time.Now().Format("2006-01-02 15:04:05.000")
+	return fmt.Sprintf(logFormat, now, level, message)
+}
+
+func makeContextLogMessage(level string, ctx interface{}, traceId, source, target, message string) string {
+	now := time.Now().Format("2006-01-02 15:04:05.000")
+	return fmt.Sprintf(logFormatContext, now, level, traceId, source, target, message)
+}
+
 func Info(message string, fields ...zap.Field) {
-	log.Info(message, fields...)
+	msg := makeLogMessage("INFO", message)
+	log.Info(msg, fields...)
 }
 
 func Debug(message string, fields ...zap.Field) {
-	log.Debug(message, fields...)
+	msg := makeLogMessage("DEBUG", message)
+	log.Debug(msg, fields...)
 }
 
 func Error(message string, fields ...zap.Field) {
-	log.Error(message, fields...)
+	msg := makeLogMessage("ERROR", message)
+	log.Error(msg, fields...)
 }
 
-func Panic(message string, fields ...zap.Field) {
-	log.Panic(message, fields...)
+func Fatal(message string, fields ...zap.Field) {
+	msg := makeLogMessage("FATAL", message)
+	log.Fatal(msg, fields...)
+}
+
+func InfoContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
+	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+	log.Info(msg, fields...)
+}
+
+func DebugContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
+	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+	log.Debug(msg, fields...)
+}
+
+func ErrorContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
+	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+	log.Error(msg, fields...)
+}
+
+func FatalContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
+	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+	log.Fatal(msg, fields...)
 }

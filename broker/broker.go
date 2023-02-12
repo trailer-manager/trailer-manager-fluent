@@ -3,9 +3,9 @@ package broker
 import (
 	"SiverPineValley/trailer-manager/common"
 	"SiverPineValley/trailer-manager/config"
+	"SiverPineValley/trailer-manager/logger"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"log"
 )
 
 type Broker struct {
@@ -40,6 +40,7 @@ func InitBroker() (err error) {
 	clientId := config.Broker.ClientId
 	username := config.Broker.Username
 	pwd := config.Broker.Password
+
 	if host == "" {
 		host = common.HostDefault
 	}
@@ -62,9 +63,8 @@ func InitBroker() (err error) {
 	opts.OnConnectionLost = ConnectLostHandler
 	client := mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatal(err)
+		logger.Fatal(token.Error().Error())
 	}
-
 	initTopic(client)
 	client.Disconnect(250)
 	return nil

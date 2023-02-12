@@ -2,7 +2,6 @@ package logger
 
 import (
 	"SiverPineValley/trailer-manager/common"
-	"encoding/json"
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -61,16 +60,13 @@ func InitLogger(mode string) (err error) {
 	}
 
 	encoderConfig.TimeKey = "timestamp"
+	encoderConfig.MessageKey = "message"
+	encoderConfig.CallerKey = "caller"
+	encoderConfig.LevelKey = "level"
 	encoderConfig.EncodeTime = customLogEncoder
+	//encoderConfig.EncodeTime = zapcore.EpochTimeEncoder
 	config.Encoding = "json"
 	config.EncoderConfig = encoderConfig
-
-	// initialize the JSON encoding config
-	data, _ := json.Marshal(encoderConfig)
-	var encCfg zapcore.EncoderConfig
-	if err = json.Unmarshal(data, &encCfg); err != nil {
-		return
-	}
 
 	log, err = config.Build(zap.WrapCore(initRotation), zap.AddCallerSkip(1))
 	if err != nil {

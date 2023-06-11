@@ -2,6 +2,7 @@ package controller
 
 import (
 	model "SiverPineValley/trailer-manager/model/api"
+
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"
 )

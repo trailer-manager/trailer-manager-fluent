@@ -16,15 +16,13 @@ func PostGpsLog(c echo.Context) (trmErr *common.Error) {
 
 	gpsLog := model.GpsLog{}
 	if err := c.Bind(&gpsLog); err != nil {
-		logger.Debug("여기?")
 		logger.ErrorContext(ctx, err.Error())
-		logger.Debug("여기?2")
 		return common.NewServerError(c, common.ServerErrBadRequest)
 	}
 
 	store := db.NewStore(db.RDB)
 	_, err := store.CreateGpsLog(ctx, db.CreateGpsLogParams{
-		Sid:     gpsLog.Sid,
+		Sid:     sql.NullString{String: gpsLog.Sid, Valid: true},
 		Lat:     gpsLog.Lat,
 		Lon:     gpsLog.Lon,
 		Speed:   sql.NullString{String: gpsLog.Speed, Valid: true},

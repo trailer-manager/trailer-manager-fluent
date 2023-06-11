@@ -3,6 +3,7 @@ package api
 import (
 	"SiverPineValley/trailer-manager/common"
 	"SiverPineValley/trailer-manager/logger"
+	model "SiverPineValley/trailer-manager/model/api"
 	"SiverPineValley/trailer-manager/utility"
 	"bytes"
 	"context"
@@ -11,6 +12,7 @@ import (
 	"io"
 	"net/http"
 	"runtime/debug"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -28,7 +30,7 @@ func transactionIdHandler(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func errHandler(err error, c echo.Context) () {
+func errHandler(err error, c echo.Context) {
 	code := http.StatusInternalServerError
 	msg := err.Error()
 
@@ -39,7 +41,22 @@ func errHandler(err error, c echo.Context) () {
 		}
 	}
 
-	c.JSON(code, map[string]string{"message": msg})
+	var errCode string = strconv.Itoa(code * 10)
+	if e, ok := err.(*common.Error); ok {
+		errCode = e.Code
+	}
+
+	ctx := utility.GetContextFromEchoContext(c)
+	var tid string
+	tid, _ = ctx.Value(common.HeaderTransactionId).(string)
+	c.JSON(code, model.Response{
+		Result: model.Result{
+			StatusCode:    code,
+			ErrorCode:     errCode,
+			TransactionId: tid,
+			Message:       msg,
+		},
+	})
 }
 
 func notFoundHandler(c echo.Context) error {
@@ -106,7 +123,7 @@ func httpBefore(c echo.Context) {
 }
 
 func httpAfter(c echo.Context, latency time.Duration) {
-	defer func(){
+	defer func() {
 		if r := recover(); r != nil {
 			logger.ErrorContext(utility.GetContextFromEchoContext(c), string(debug.Stack()))
 		}

@@ -2,6 +2,8 @@ package logger
 
 import (
 	"SiverPineValley/trailer-manager/common"
+	"SiverPineValley/trailer-manager/utility"
+	"context"
 	"fmt"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -50,7 +52,7 @@ func InitLogger(mode string) (err error) {
 	config := zap.NewProductionConfig()
 
 	encoderConfig := zapcore.EncoderConfig{}
-	if mode == common.ModeDevelopment || mode == common.ModeStaging {
+	if utility.Contains([]string{common.ModeLocal, common.ModeDevelopment, common.ModeStaging}, mode) {
 		encoderConfig = zap.NewDevelopmentEncoderConfig()
 		encoderConfig.StacktraceKey = "stacktrace"
 	} else {
@@ -59,8 +61,8 @@ func InitLogger(mode string) (err error) {
 		config.DisableStacktrace = true
 	}
 
-	encoderConfig.TimeKey = "timestamp"
-	encoderConfig.MessageKey = "message"
+	encoderConfig.TimeKey = "time"
+	encoderConfig.MessageKey = "msg"
 	encoderConfig.CallerKey = "caller"
 	encoderConfig.LevelKey = "level"
 	encoderConfig.EncodeTime = customLogEncoder
@@ -68,7 +70,7 @@ func InitLogger(mode string) (err error) {
 	config.Encoding = "json"
 	config.EncoderConfig = encoderConfig
 
-	log, err = config.Build(zap.WrapCore(initRotation), zap.AddCallerSkip(1))
+	log, err = config.Build(zap.WrapCore(initRotation), zap.AddCallerSkip(2))
 	if err != nil {
 		builtin_log.Fatal(err)
 	}
@@ -77,13 +79,31 @@ func InitLogger(mode string) (err error) {
 }
 
 func makeLogMessage(level string, message string) string {
-	now := time.Now().Format("2006-01-02 15:04:05.000")
+	lc, _ := time.LoadLocation("Asia/Seoul")
+	now := time.Now().In(lc).Format("2006-01-02 15:04:05.000")
 	return fmt.Sprintf(logFormat, now, level, message)
 }
 
-func makeContextLogMessage(level string, ctx interface{}, traceId, source, target, message string) string {
-	now := time.Now().Format("2006-01-02 15:04:05.000")
-	return fmt.Sprintf(logFormatContext, now, level, traceId, source, target, message)
+func makeContextLogMessage(level string, ctx context.Context, transactionId string, args ...interface{}) (msg string, fields []zap.Field) {
+	fields = make([]zapcore.Field, 0)
+
+	lc, _ := time.LoadLocation("Asia/Seoul")
+	now := time.Now().In(lc).Format("2006-01-02 15:04:05.000")
+	if ctx != nil {
+		if logType, ok := ctx.Value(common.ContextLogType).(string); ok && logType != "" {
+			fields = append(fields, zap.String("type", logType))
+		} else {
+			fields = append(fields, zap.String("type", common.ContextLogTypeNormal))
+		}
+	} else {
+		fields = append(fields, zap.String("type", common.ContextLogTypeNormal))
+	}
+	fields = append(fields, zap.String(common.HeaderTransactionId, transactionId))
+	fields = append(fields, zap.String("level", level))
+	fields = append(fields, zap.String("time", now))
+
+	msg = fmt.Sprint(args...)
+	return msg, fields
 }
 
 func Info(message string, fields ...zap.Field) {
@@ -106,22 +126,30 @@ func Fatal(message string, fields ...zap.Field) {
 	log.Fatal(msg, fields...)
 }
 
-func InfoContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
-	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+func InfoContext(ctx context.Context, args ...interface{}) {
+	transactionId, _ := ctx.Value(common.HeaderTransactionId).(string)
+
+	msg, fields := makeContextLogMessage("INFO", ctx, transactionId, args)
 	log.Info(msg, fields...)
 }
 
-func DebugContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
-	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+func DebugContext(ctx context.Context, args ...interface{}) {
+	transactionId, _ := ctx.Value(common.HeaderTransactionId).(string)
+
+	msg, fields := makeContextLogMessage("INFO", ctx, transactionId, args)
 	log.Debug(msg, fields...)
 }
 
-func ErrorContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
-	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+func ErrorContext(ctx context.Context, args ...interface{}) {
+	transactionId, _ := ctx.Value(common.HeaderTransactionId).(string)
+
+	msg, fields := makeContextLogMessage("INFO", ctx, transactionId, args)
 	log.Error(msg, fields...)
 }
 
-func FatalContext(ctx interface{}, traceId, source, target, message string, fields ...zap.Field) {
-	msg := makeContextLogMessage("INFO", ctx, traceId, source, target, message)
+func FatalContext(ctx context.Context, args ...interface{}) {
+	transactionId, _ := ctx.Value(common.HeaderTransactionId).(string)
+
+	msg, fields := makeContextLogMessage("INFO", ctx, transactionId, args)
 	log.Fatal(msg, fields...)
 }

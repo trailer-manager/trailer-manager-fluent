@@ -9,8 +9,9 @@ import (
 )
 
 type GpsLog struct {
+	Seq int32 `json:"seq"`
 	// 센서 시리얼 넘버
-	Sid string `json:"sid"`
+	Sid sql.NullString `json:"sid"`
 	// 위도
 	Lat string `json:"lat"`
 	// 경도
@@ -20,7 +21,7 @@ type GpsLog struct {
 	// WIFI 로케이션 (SSID)
 	WifiLoc       []string      `json:"wifi_loc"`
 	Battery       sql.NullInt32 `json:"battery"`
-	RealCreaetdAt sql.NullTime  `json:"real_creaetd_at"`
+	RealCreatedAt sql.NullTime  `json:"real_created_at"`
 }
 
 type Sensor struct {
@@ -48,7 +49,7 @@ type SensorLog struct {
 	Uid uuid.UUID `json:"uid"`
 	// 사용 중인 트레일러 ID
 	Tid           uuid.UUID    `json:"tid"`
-	RealCreaetdAt sql.NullTime `json:"real_creaetd_at"`
+	RealCreatedAt sql.NullTime `json:"real_created_at"`
 }
 
 type Trailer struct {

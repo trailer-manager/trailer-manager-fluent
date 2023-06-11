@@ -3,7 +3,7 @@ package broker
 import (
 	db "SiverPineValley/trailer-manager/db/rdb"
 	"SiverPineValley/trailer-manager/logger"
-	"SiverPineValley/trailer-manager/model"
+	"SiverPineValley/trailer-manager/model/api"
 	"database/sql"
 	"encoding/json"
 	"fmt"

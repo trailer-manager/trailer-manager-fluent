@@ -29,17 +29,18 @@ CREATE TABLE "sensor_log" (
                               "sid" varchar NOT NULL,
                               "uid" uuid NOT NULL,
                               "tid" uuid NOT NULL,
-                              "real_creaetd_at" timestamp DEFAULT (now())
+                              "real_created_at" timestamp DEFAULT (now())
 );
 
 CREATE TABLE "gps_log" (
-                           "sid" varchar PRIMARY KEY,
+                           "seq" serial PRIMARY KEY,
+                           "sid" varchar,
                            "lat" varchar NOT NULL,
                            "lon" varchar NOT NULL,
                            "speed" numeric,
                            "wifi_loc" varchar[],
                            "battery" int,
-                           "real_creaetd_at" timestamp DEFAULT (now())
+                           "real_created_at" timestamp DEFAULT (now())
 );
 
 CREATE TABLE "user" (
@@ -77,7 +78,7 @@ CREATE TABLE "user_cert" (
 
 CREATE INDEX "sensor_log_index" ON "sensor_log" ("sid", "uid", "tid");
 
-CREATE INDEX "gps_log_index" ON "gps_log" ("sid", "real_creaetd_at");
+CREATE INDEX "gps_log_index" ON "gps_log" ("sid", "real_created_at");
 
 COMMENT ON COLUMN "trailer"."tid" IS '트레일러 ID';
 
@@ -142,17 +143,3 @@ COMMENT ON COLUMN "user_cert"."uid" IS '사용자 ID';
 COMMENT ON COLUMN "user_cert"."ci" IS '본인인증 CI';
 
 COMMENT ON COLUMN "user_cert"."di" IS '본인인증 DI';
-
-ALTER TABLE "trailer_sensor_map" ADD FOREIGN KEY ("tid") REFERENCES "trailer" ("tid");
-
-ALTER TABLE "trailer_sensor_map" ADD FOREIGN KEY ("sid") REFERENCES "sensor" ("sid");
-
-ALTER TABLE "sensor_log" ADD FOREIGN KEY ("sid") REFERENCES "sensor" ("sid");
-
-ALTER TABLE "sensor_log" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
-
-ALTER TABLE "gps_log" ADD FOREIGN KEY ("sid") REFERENCES "sensor" ("sid");
-
-ALTER TABLE "user_auth" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");
-
-ALTER TABLE "user_cert" ADD FOREIGN KEY ("uid") REFERENCES "user" ("uid");

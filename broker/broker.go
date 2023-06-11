@@ -4,8 +4,11 @@ import (
 	"SiverPineValley/trailer-manager/common"
 	"SiverPineValley/trailer-manager/config"
 	"SiverPineValley/trailer-manager/logger"
+	"SiverPineValley/trailer-manager/model/api"
+	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"time"
 )
 
 type Broker struct {
@@ -66,6 +69,21 @@ func InitBroker() (err error) {
 		logger.Fatal(token.Error().Error())
 	}
 	initTopic(client)
-	client.Disconnect(250)
+	//client.Disconnect(250)
 	return nil
+}
+
+func PublishTest(client mqtt.Client) {
+	t := model.GpsLog{
+		Sid: "e6:61:64:8:43:78:68:23",
+		Lat: "",
+		Lon: "",
+		Speed: "0",
+		WifiLoc: []string{"csg"},
+		Battery: 100,
+	}
+	text, _ := json.Marshal(t)
+	token := client.Publish("gps/log", 0, false, text)
+	token.Wait()
+	time.Sleep(time.Second)
 }

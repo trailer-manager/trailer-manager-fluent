@@ -6,14 +6,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type TMError struct {
+type Error struct {
 	Id      string `json:"errorId"`   // (Mandatory) 에러 ID
 	Code    string `json:"errorCode"` // (Mandatory) 에러 코드
 	Message string `json:"message"`   // (Mandatory) 메시지
 }
 
-func (tmErr *TMError) Error() string {
-	return fmt.Sprintf("[%s] %s", tmErr.Code, tmErr.Message)
+func (err *Error) Error() string {
+	return fmt.Sprintf("[%s] %s", err.Code, err.Message)
 }
 
 // 내부 에러
@@ -23,60 +23,73 @@ var (
 
 // 웹 에러
 const (
-	WebErrSuccess        = 2000
-	WebErrBadRequest     = 4000
-	WebErrUnauthorized   = 4010
-	WebErrForbidden      = 4030
-	WebErrNotFound       = 4040
-	WebErrInternalServer = 5000
+	ServerErrSuccess          = 2000
+	ServerErrBadRequest       = 4000
+	ServerErrInvalidParameter = 4001
+	ServerErrInvalidValues    = 4002
+	ServerErrUnauthorized     = 4010
+	ServerErrForbidden        = 4030
+	ServerErrNotFound         = 4040
+	ServerErrRequestTimeout   = 4080
+	ServerErrInternalServer   = 5000
 )
 
 var (
-	WebErrors = map[int]TMError{
-		WebErrBadRequest: {
-			Code:    fmt.Sprintf("%d", WebErrBadRequest),
+	WebErrors = map[int]Error{
+		ServerErrBadRequest: {
+			Code:    fmt.Sprintf("%d", ServerErrBadRequest),
 			Message: "Bad Request",
+		}, ServerErrInvalidParameter: {
+			Code:    fmt.Sprintf("%d", ServerErrInvalidParameter),
+			Message: "Invalid Parameter",
+		}, ServerErrInvalidValues: {
+			Code:    fmt.Sprintf("%d", ServerErrInvalidValues),
+			Message: "Invalid Values",
 		},
-		WebErrUnauthorized: {
-			Code:    fmt.Sprintf("%d", WebErrUnauthorized),
+		ServerErrUnauthorized: {
+			Code:    fmt.Sprintf("%d", ServerErrUnauthorized),
 			Message: "Unauthorized Request",
 		},
-		WebErrForbidden: {
-			Code:    fmt.Sprintf("%d", WebErrForbidden),
+		ServerErrForbidden: {
+			Code:    fmt.Sprintf("%d", ServerErrForbidden),
 			Message: "Forbidden",
 		},
-		WebErrNotFound: {
-			Code:    fmt.Sprintf("%d", WebErrNotFound),
+		ServerErrNotFound: {
+			Code:    fmt.Sprintf("%d", ServerErrNotFound),
 			Message: "Not Found",
 		},
-		WebErrInternalServer: {
-			Code:    fmt.Sprintf("%d", WebErrInternalServer),
+		ServerErrRequestTimeout: {
+			Code:    fmt.Sprintf("%d", ServerErrRequestTimeout),
+			Message: "Request Timeout",
+		},
+		ServerErrInternalServer: {
+			Code:    fmt.Sprintf("%d", ServerErrInternalServer),
 			Message: "Internal Server Error",
 		},
 	}
 )
 
-func GetWebError(c interface{}, errCode int) (err *TMError) {
+func NewServerError(c interface{}, errCode int) (err *Error) {
 	ctxType, ctxGo, ctxEcho := getContextType(c)
 
-	err = new(TMError)
+	err = new(Error)
 	err.Code = WebErrors[errCode].Code
 	err.Message = WebErrors[errCode].Message
 
 	if ctxType == ContextTypeGo && ctxGo != nil {
-		traceId, _ := ctxGo.Value("traceId").(string)
+		traceId, _ := ctxGo.Value(HeaderTransactionId).(string)
 		err.Id = traceId
 	} else if ctxType == ContextTypeEcho && ctxEcho != nil {
-		err.Id = ctxEcho.Request().Header.Get("traceId")
+		err.Id = ctxEcho.Request().Header.Get(HeaderTransactionId)
 	}
 
 	return
 }
 
-func GetWebErrorWithMessage(c interface{}, errCode int, message string) (err *TMError) {
+func NewServerErrorWithMessage(c interface{}, errCode int, message string) (err *Error) {
 	ctxType, ctxGo, ctxEcho := getContextType(c)
 
-	err = new(TMError)
+	err = new(Error)
 	err.Code = WebErrors[errCode].Code
 	err.Message = WebErrors[errCode].Message
 	if message != "" {
@@ -84,13 +97,17 @@ func GetWebErrorWithMessage(c interface{}, errCode int, message string) (err *TM
 	}
 
 	if ctxType == ContextTypeGo && ctxGo != nil {
-		traceId, _ := ctxGo.Value("traceId").(string)
+		traceId, _ := ctxGo.Value(HeaderTransactionId).(string)
 		err.Id = traceId
 	} else if ctxType == ContextTypeEcho && ctxEcho != nil {
-		err.Id = ctxEcho.Request().Header.Get("traceId")
+		err.Id = ctxEcho.Request().Header.Get(HeaderTransactionId)
 	}
 
 	return
+}
+
+func (err *Error) IsError() bool {
+	return err != nil
 }
 
 func getContextType(c interface{}) (ctxType int, ctxGo context.Context, ctxEcho echo.Context) {

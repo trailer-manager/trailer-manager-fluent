@@ -1,8 +1,15 @@
 package config
 
 import (
+	"SiverPineValley/trailer-manager/common"
+	"SiverPineValley/trailer-manager/utility"
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"log"
+)
+
+const (
+	path = "./config/config_%s.toml"
 )
 
 type Config struct {
@@ -41,8 +48,12 @@ type Server struct {
 
 var config *Config
 
-func InitConfig() (err error) {
-	_, err = toml.DecodeFile("./config/config.toml", &config)
+func InitConfig(mode string) (err error) {
+	if !utility.Contains([]string{common.ModeLocal, common.ModeDevelopment, common.ModeStaging, common.ModeProduction}, mode) {
+
+	}
+
+	_, err = toml.DecodeFile(fmt.Sprintf(path, mode), &config)
 	if err != nil {
 		log.Fatal(err)
 		return

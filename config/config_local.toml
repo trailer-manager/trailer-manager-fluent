@@ -1,12 +1,14 @@
 port = 1323
 process_name = "trailer_manager"
-allow_origins = ["http://localhost:80"]
+allow_origins = ["http://localhost:1323"]
 
 [broker]
-host = "0.0.0.0"
+host = "127.0.0.1"
 port = 1883
 clientId = "trailer_manager"
 topics = ["gps/log"]
+username = "admin"
+password = "admin"
 
 [rdb]
 driver = "postgres"

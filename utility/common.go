@@ -1,41 +1,53 @@
 package utility
 
-func NvlString(s *string) string {
-	if s == nil {
-		return ""
-	}
+import (
+	"SiverPineValley/trailer-manager/common"
+	"context"
+	"github.com/google/uuid"
+	"github.com/labstack/echo/v4"
+	"net/http"
+)
 
-	return *s
+type nvlTypes interface {
+	~string | ~bool | ~int | ~int8 | ~int16 | ~int32 | ~int64 | ~float32 | ~float64
 }
 
-func NvlString2(s *string, d string) string {
-	if s == nil {
-		return d
+func Nvl[T nvlTypes](v *T, d ...T) (rtn T) {
+	if v == nil {
+		return
 	}
-
-	return *s
+	if len(d) > 0 {
+		return d[0]
+	}
+	return *v
 }
 
-func NvlInteger(i *int) int {
-	if i == nil {
-		return 0
+func Contains[T comparable](s []T, e T) bool {
+	for _, v := range s {
+		if v == e {
+			return true
+		}
 	}
-
-	return *i
+	return false
 }
 
-func NvlFloat(f *float64) float64 {
-	if f == nil {
-		return 0.0
-	}
-
-	return *f
+func NewUuidGenerate() string {
+	return uuid.New().String()
 }
 
-func NvlBool(b *bool) bool {
-	if b == nil {
-		return false
+func GetContextFromEchoContext(c echo.Context) (ctx context.Context) {
+	ctx = context.Background()
+
+	if c != nil && c.Request() != nil && c.Request().Header != nil {
+		h := c.Request().Header
+		for k := range h {
+			if k == http.CanonicalHeaderKey(common.HeaderTransactionId) {
+				ctx = context.WithValue(ctx, common.HeaderTransactionId, h.Get(common.HeaderTransactionId))
+			} else {
+				ctx = context.WithValue(ctx, common.ContextKey+k, h.Get(k))
+			}
+		}
 	}
 
-	return *b
+	return
 }

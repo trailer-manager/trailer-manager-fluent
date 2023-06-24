@@ -5,20 +5,23 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
-WORKDIR /app
-
-COPY ./* .
+COPY . "/usr/local/go/src/SiverPineValley/trailer-manager"
+WORKDIR "/usr/local/go/src/SiverPineValley/trailer-manager"
 
 RUN go mod download
 
 RUN go build -o main
 
-WORKDIR /app
+RUN mkdir /app
+RUN mkdir /app/config
 
-RUN cp /app/main .
+RUN cp ./main /app/main
+RUN cp ./config/* /app/config
+
+WORKDIR /app
 
 FROM scratch
 
 COPY --from=builder /app/main .
 
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["./main --mode=dev"]

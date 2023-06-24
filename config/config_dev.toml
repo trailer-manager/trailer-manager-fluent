@@ -1,6 +1,6 @@
 port = 1323
 process_name = "trailer_manager"
-allow_origins = ["http://localhost:80"]
+allow_origins = ["http://localhost:8080"]
 
 [broker]
 host = "127.0.0.1"
@@ -12,7 +12,7 @@ password = "admin"
 
 [rdb]
 driver = "postgres"
-host = "127.0.0.1"
+host = "postgres-6ccf59dff-mhs7t"
 port = 5432
 dbname = "trailer_manager"
 username = "root"

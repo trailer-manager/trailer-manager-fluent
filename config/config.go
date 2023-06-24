@@ -3,6 +3,7 @@ package config
 import (
 	"SiverPineValley/trailer-manager/common"
 	"SiverPineValley/trailer-manager/utility"
+	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"log"
@@ -50,7 +51,9 @@ var config *Config
 
 func InitConfig(mode string) (err error) {
 	if !utility.Contains([]string{common.ModeLocal, common.ModeDevelopment, common.ModeStaging, common.ModeProduction}, mode) {
-
+		err = errors.New("Invalid Config")
+		log.Fatal(err)
+		return
 	}
 
 	_, err = toml.DecodeFile(fmt.Sprintf(path, mode), &config)
@@ -61,6 +64,6 @@ func InitConfig(mode string) (err error) {
 	return
 }
 
-func GetConfig() (Config) {
+func GetConfig() Config {
 	return *config
 }

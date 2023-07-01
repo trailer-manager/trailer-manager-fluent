@@ -12,7 +12,7 @@ password = "admin"
 
 [rdb]
 driver = "postgres"
-host = "postgres-6ccf59dff-mhs7t"
+host = "127.0.0.1"
 port = 5432
 dbname = "trailer_manager"
 username = "root"

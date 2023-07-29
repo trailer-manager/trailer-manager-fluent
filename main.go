@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	mode := utility.Nvl(flag.String("mode", "dev", "서버 모드 (로컬: local, 개발: dev, 검증: stg, 운영: prd"))
+	mode := utility.Nvl(flag.String("mode", "local", "서버 모드 (로컬: local, 개발: dev, 검증: stg, 운영: prd"))
 
 	// 1. Init Config
 	if err := config.InitConfig(mode); err != nil {

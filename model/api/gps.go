@@ -1,10 +1,10 @@
 package model
 
 type GpsLog struct {
-	Sid     string   `json:"sid"`
-	Lat     string   `json:"lat"`
-	Lon     string   `json:"lon"`
-	Speed   string   `json:"speed"`
-	WifiLoc []string `json:"wifi_loc"`
-	Battery int      `json:"battery"`
+	Sid     string   `json:"sid" form:"sid"`
+	Lat     string   `json:"lat" form:"lat"`
+	Lon     string   `json:"lon" form:"lon"`
+	Speed   string   `json:"speed" form:"speed"`
+	WifiLoc []string `json:"wifiLoc" form:"wifiLoc"`
+	Battery int      `json:"battery" form:"battery"`
 }

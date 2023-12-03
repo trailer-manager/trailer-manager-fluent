@@ -14,7 +14,7 @@ import (
 func PostGpsLog(c echo.Context) (trmErr *common.Error) {
 	ctx := utility.GetContextFromEchoContext(c)
 
-	gpsLog := model.GpsLog{}
+	gpsLog := model.GpsLogRequest{}
 	if err := c.Bind(&gpsLog); err != nil {
 		logger.ErrorContext(ctx, err.Error())
 		return common.NewServerError(c, common.ServerErrBadRequest)

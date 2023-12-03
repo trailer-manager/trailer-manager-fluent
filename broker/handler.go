@@ -25,7 +25,7 @@ var ConnectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 var GpsLogHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 
-	gpsLog := model.GpsLog{}
+	gpsLog := model.GpsLogRequest{}
 	if err := json.Unmarshal(msg.Payload(), &gpsLog); err != nil {
 		logger.Error(err.Error())
 	}

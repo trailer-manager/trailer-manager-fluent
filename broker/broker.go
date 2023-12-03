@@ -74,11 +74,11 @@ func InitBroker() (err error) {
 }
 
 func PublishTest(client mqtt.Client) {
-	t := model.GpsLog{
-		Sid: "e6:61:64:8:43:78:68:23",
-		Lat: "",
-		Lon: "",
-		Speed: "0",
+	t := model.GpsLogRequest{
+		Sid:     "e6:61:64:8:43:78:68:23",
+		Lat:     "",
+		Lon:     "",
+		Speed:   "0",
 		WifiLoc: []string{"csg"},
 		Battery: 100,
 	}

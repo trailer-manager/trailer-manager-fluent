@@ -1,6 +1,6 @@
 package model
 
-type GpsLog struct {
+type GpsLogRequest struct {
 	Sid     string   `json:"sid" form:"sid"`
 	Lat     string   `json:"lat" form:"lat"`
 	Lon     string   `json:"lon" form:"lon"`

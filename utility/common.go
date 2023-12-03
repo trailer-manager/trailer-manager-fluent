@@ -3,9 +3,12 @@ package utility
 import (
 	"SiverPineValley/trailer-manager/common"
 	"context"
+	"encoding/base64"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"net/http"
+	"reflect"
 )
 
 type nvlTypes interface {
@@ -50,4 +53,26 @@ func GetContextFromEchoContext(c echo.Context) (ctx context.Context) {
 	}
 
 	return
+}
+
+func Base64DecodeStruct(body interface{}) {
+	value := reflect.ValueOf(body).Elem()
+	typ := reflect.TypeOf(body).Elem()
+
+	for i := 0; i < typ.NumField(); i++ {
+		field := typ.Field(i)
+		tag := field.Tag.Get("decode")
+
+		if tag == "true" {
+			fieldValue := value.Field(i)
+			if fieldValue.Kind() == reflect.String && fieldValue.String() != "" {
+				decoded, err := base64.StdEncoding.DecodeString(fieldValue.String())
+				if err != nil {
+					fmt.Printf("Failed to decode field %s: %v\n", field.Name, err)
+				} else {
+					fieldValue.SetString(string(decoded))
+				}
+			}
+		}
+	}
 }

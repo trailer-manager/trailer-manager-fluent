@@ -16,6 +16,7 @@ const (
 type Config struct {
 	Broker       Broker   `toml:"broker"`
 	Rdb          Rdb      `toml:"rdb"`
+	Cache        Cache    `toml:"cache"`
 	Port         int      `toml:"port"`
 	Processname  string   `toml:"process_name"`
 	AllowOrigins []string `toml:"allow_origins"`
@@ -36,6 +37,14 @@ type Rdb struct {
 	Port     int    `toml:"port"`
 	DbName   string `toml:"dbname"`
 	Username string `toml:"username"`
+	Password string `toml:"password"`
+}
+
+type Cache struct {
+	Driver   string `toml:"driver"`
+	Host     string `toml:"host"`
+	Port     int    `toml:"port"`
+	DB       int    `toml:"db"`
 	Password string `toml:"password"`
 }
 

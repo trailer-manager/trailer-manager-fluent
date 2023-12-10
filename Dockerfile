@@ -5,8 +5,8 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64
 
-COPY . "/usr/local/go/src/SiverPineValley/trailer-manager"
-WORKDIR "/usr/local/go/src/SiverPineValley/trailer-manager"
+COPY . "/usr/local/go/src/github.com/SiverPineValley/trailer-manager"
+WORKDIR "/usr/local/go/src/github.com/SiverPineValley/trailer-manager"
 
 RUN go mod download
 

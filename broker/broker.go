@@ -1,13 +1,14 @@
 package broker
 
 import (
-	"SiverPineValley/trailer-manager/common"
-	"SiverPineValley/trailer-manager/config"
-	"SiverPineValley/trailer-manager/logger"
-	"SiverPineValley/trailer-manager/model/api"
 	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	tm "github.com/trailer-manager/trailer-manager-common"
+	"github.com/trailer-manager/trailer-manager-common/config"
+	tmError "github.com/trailer-manager/trailer-manager-common/error"
+	"github.com/trailer-manager/trailer-manager-common/logger"
+	"github.com/trailer-manager/trailer-manager-fluent/model/api"
 	"time"
 )
 
@@ -45,15 +46,15 @@ func InitBroker() (err error) {
 	pwd := config.Broker.Password
 
 	if host == "" {
-		host = common.HostDefault
+		host = tm.HostDefault
 	}
 
 	if port <= 0 {
-		port = common.PortDefault
+		port = tm.PortDefault
 	}
 
 	if clientId == "" {
-		return common.ConfigErr
+		return tmError.ConfigErr
 	}
 
 	opts := mqtt.NewClientOptions()

@@ -1,10 +1,10 @@
 package db
 
 import (
-	"SiverPineValley/trailer-manager/config"
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/trailer-manager/trailer-manager-common/config"
 	"log"
 )
 

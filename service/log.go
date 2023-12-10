@@ -1,23 +1,23 @@
 package service
 
 import (
-	"SiverPineValley/trailer-manager/common"
-	db "SiverPineValley/trailer-manager/db/rdb"
-	"SiverPineValley/trailer-manager/logger"
-	model "SiverPineValley/trailer-manager/model/api"
-
-	"SiverPineValley/trailer-manager/utility"
-	"database/sql"
 	"github.com/labstack/echo/v4"
+	tmError "github.com/trailer-manager/trailer-manager-common/error"
+	"github.com/trailer-manager/trailer-manager-common/logger"
+	db "github.com/trailer-manager/trailer-manager-fluent/db/rdb"
+	model "github.com/trailer-manager/trailer-manager-fluent/model/api"
+
+	"database/sql"
+	"github.com/trailer-manager/trailer-manager-common/utility"
 )
 
-func PostGpsLog(c echo.Context) (trmErr *common.Error) {
+func PostGpsLog(c echo.Context) (trmErr *tmError.Error) {
 	ctx := utility.GetContextFromEchoContext(c)
 
 	gpsLog := model.GpsLogRequest{}
 	if err := c.Bind(&gpsLog); err != nil {
 		logger.ErrorContext(ctx, err.Error())
-		return common.NewServerError(c, common.ServerErrBadRequest)
+		return tmError.NewServerError(c, tmError.ServerErrBadRequest)
 	}
 
 	store := db.NewStore(db.RDB)
@@ -31,7 +31,7 @@ func PostGpsLog(c echo.Context) (trmErr *common.Error) {
 	})
 	if err != nil {
 		logger.ErrorContext(ctx, err.Error())
-		return common.NewServerError(c, common.ServerErrInternalServer)
+		return tmError.NewServerError(c, tmError.ServerErrInternalServer)
 	}
 	logger.Debug("third")
 

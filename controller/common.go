@@ -1,7 +1,7 @@
 package controller
 
 import (
-	model "SiverPineValley/trailer-manager/model/api"
+	model "github.com/trailer-manager/trailer-manager-fluent/model/api"
 
 	"github.com/jinzhu/copier"
 	"github.com/labstack/echo/v4"

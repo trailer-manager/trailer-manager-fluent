@@ -1,13 +1,13 @@
 package broker
 
 import (
-	db "SiverPineValley/trailer-manager/db/rdb"
-	"SiverPineValley/trailer-manager/logger"
-	"SiverPineValley/trailer-manager/model/api"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/trailer-manager/trailer-manager-common/logger"
+	db "github.com/trailer-manager/trailer-manager-fluent/db/rdb"
+	"github.com/trailer-manager/trailer-manager-fluent/model/api"
 )
 
 var MessagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -32,7 +32,7 @@ var GpsLogHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Messag
 
 	store := db.NewStore(db.RDB)
 	_, err := store.CreateGpsLog(nil, db.CreateGpsLogParams{
-		Sid:     gpsLog.Sid,
+		Sid:     sql.NullString{String: gpsLog.Sid},
 		Lat:     gpsLog.Lat,
 		Lon:     gpsLog.Lon,
 		Speed:   sql.NullString{String: gpsLog.Speed, Valid: true},

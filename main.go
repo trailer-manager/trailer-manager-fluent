@@ -1,14 +1,14 @@
 package main
 
 import (
-	"SiverPineValley/trailer-manager/api"
-	//"SiverPineValley/trailer-manager/broker"
-	"SiverPineValley/trailer-manager/config"
-	db "SiverPineValley/trailer-manager/db/rdb"
-	"SiverPineValley/trailer-manager/logger"
-	"SiverPineValley/trailer-manager/utility"
 	"flag"
 	"fmt"
+	"github.com/trailer-manager/trailer-manager-common/config"
+	"github.com/trailer-manager/trailer-manager-common/logger"
+	//"github.com/trailer-manager/trailer-manager-fluent/broker"
+	"github.com/trailer-manager/trailer-manager-common/utility"
+	"github.com/trailer-manager/trailer-manager-fluent/api"
+	db "github.com/trailer-manager/trailer-manager-fluent/db/rdb"
 	"log"
 )
 
@@ -36,7 +36,7 @@ func main() {
 	}
 
 	// 5. Init Server
-	server, err := api.NewServer(db.NewStore(db.RDB))
+	server, err := api.NewFluentServer(db.NewStore(db.RDB))
 	if err != nil {
 		logger.Fatal("cannot create server: " + err.Error())
 	}

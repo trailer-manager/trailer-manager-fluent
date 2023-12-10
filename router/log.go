@@ -1,8 +1,8 @@
 package router
 
 import (
-	"SiverPineValley/trailer-manager/controller"
 	"github.com/labstack/echo/v4"
+	"github.com/trailer-manager/trailer-manager-fluent/controller"
 )
 
 func AddLogRouter(e *echo.Echo, m ...echo.MiddlewareFunc) {

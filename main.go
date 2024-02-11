@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"github.com/trailer-manager/trailer-manager-common/config"
 	"github.com/trailer-manager/trailer-manager-common/logger"
+	"github.com/trailer-manager/trailer-manager-common/server"
+	"github.com/trailer-manager/trailer-manager-fluent/router"
+
 	//"github.com/trailer-manager/trailer-manager-fluent/broker"
 	"github.com/trailer-manager/trailer-manager-common/utility"
-	"github.com/trailer-manager/trailer-manager-fluent/api"
 	db "github.com/trailer-manager/trailer-manager-fluent/db/rdb"
 	"log"
 )
@@ -36,11 +38,9 @@ func main() {
 	}
 
 	// 5. Init Server
-	server, err := api.NewFluentServer(db.NewStore(db.RDB))
-	if err != nil {
-		logger.Fatal("cannot create server: " + err.Error())
-	}
+	e := server.NewServer()
+	router.InitRouter(e)
 
-	server.Router.Logger.Fatal(server.Router.Start(fmt.Sprintf(":%d", config.GetConfig().Port)))
+	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", config.GetConfig().Port)))
 	return
 }

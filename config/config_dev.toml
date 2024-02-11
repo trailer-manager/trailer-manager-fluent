@@ -1,5 +1,5 @@
 port = 1323
-process_name = "trailer_manager"
+process_name = "trailer_manager_fluent"
 allow_origins = ["http://localhost:8080"]
 
 [broker]
